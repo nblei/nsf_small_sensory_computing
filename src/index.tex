@@ -1,3 +1,62 @@
+\documentclass[11 pt]{article}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{wrapfig}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{subcaption}
+\usepackage{adjustbox}
+
+\newcommand{\Olfc}{Olfactory computing}
+\newcommand{\olfc}{olfactory computing}
+\newcommand{\apptinysr}{TinySR}
+\newcommand{\appdeepspeech}{DeepSpeech}
+\newcommand{\appambisonic}{Ambisonic}
+\newcommand{\apphmt}{HMT} \newcommand{\apphrtf}{HRTF}
+\newcommand{\appspeakerauthentication}{Speaker Auth.}
+\newcommand{\appalbert}{ALBERT}
+\newcommand{\appdeepecgcnn}{DeepECGCNN}
+\newcommand{\appwavetoletter}{Wav2letter}
+\newcommand{\appresnet}{TLIO-ResNet}
+\newcommand{\appekf}{EKF}
+
+\newcommand{\VNom}{\SI{1}{\volt}}
+\newcommand{\FNom}{\SI{500}{\kilo\hertz}}
+\newcommand{\vmacc}{packed SIMD unit}
+\newcommand{\cgra}{CGRA}
+\newcommand{\nkernels}{9}
+\newcommand{\mcu}{RISC-V core}
+\newcommand{\arch}{Ahromaa}
+\newcommand{\gcms}{gas chromatography-mass spectrometry}
+\newcommand{\Gcms}{Gas chromatography-mass spectrometry}
+
+\newcommand{\kernelfft}{FFT}
+\newcommand{\kernelconvd}{Conv1D}
+\newcommand{\kernelgemm}{GEMM}
+\newcommand{\kernelgemv}{GEMV}
+\newcommand{\kernelbilinear}{Bilinear}
+\newcommand{\kernelconvdd}{Conv2D}
+\newcommand{\kernellu}{LU}
+\newcommand{\kernelcholesky}{Cholesky}
+\newcommand{\kernelrest}{Rest}
+\newcommand{\MeopImprovementMcu}{1.68}
+\newcommand{\MeopImprovementCgra}{1.49}
+\newcommand{\MeopImprovementVMAcc}{2.79}
+\newcommand{\FFImprovementMcu}{4.21}
+\newcommand{\FFImprovementCgra}{2.85}
+\newcommand{\FFImprovementVMAcc}{4.37}
+\newcommand{\BaselineGeomeanMcu}{1.36}
+\newcommand{\BaselineGeomeanCgra}{1.1}
+\newcommand{\BaselineGeomeanVmacc}{1.22}
+
+\title{SHF: Small: Sensory Computing Processors}
+\begin{document}
+
+
 \maketitle
 \section{Introduction}
 \input{introduction}
@@ -26,3 +85,4 @@
 
 \section{Related Work}
 \input{related_works}
+\end{document}
