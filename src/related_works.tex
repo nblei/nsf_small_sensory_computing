@@ -1,0 +1,68 @@
+There are works related to \arch{} from the perspective of low-power
+design, including works on subthreshold sensor
+processors~\cite{nazhandali2005energy}, other ultra low-power processors~\cite{lee2012circuit},
+and architectures for energy harvester powered processors~\cite{kim2022sic}.
+While parallel architectures are often thought of as having high-power, recent
+works have proposed CGRAs which operate at far below nominal
+frequency~\cite{gobieski2021snafu, das2017142mops}, enabling the energy
+efficiency associated with dataflow architectures, while still allowing
+\(\approx\si{\milli\watt}\) operations. There has also been interest in low
+power SIMD architectures, including \textit{scalar} vector
+processors~\cite{gobieski2019manic}, and vector processors for low-power media
+applications~\cite{gebis2004viram1, nam2007low}.
+
+
+SpEaC architecture
+most closely resembles the SoftBrain CGRA~\cite{nowatzki2017stream} in its
+architecture.  However, there are three  significant differences.
+First, SoftBrain uses general purpose functional units (since it is aimed at
+supporting arbitrary workloads). SpEaC replaces SoftBrain's fixed-point general
+purpose functional units with fixed-point adders and multipliers - common
+across our DSP and ML-based kernels.
+As a result, SpEaC's functional units consume 4.42x lower power, on average,
+in \SI{28}{\nano\meter} technology.
+Second, SpEaC provides hardware support for complex arithmetic through support
+for 2-element vectorized operations ($2\times 32$ multiplication, $2\times 32$
+multiplication, $2\times 32$ addition, $2\times 32$ sub-add). SoftBrain
+does not directly support complex arithmetic and, therefore, kernels such as
+FFT cannot be mapped efficiently.
+Third, SoftBrain uses a general purpose mesh network to support arbitrary
+workloads. SpEaC replaces SoftBrain's general-purpose network with a
+distribute-then-reduce tree
+due to the specific multiply-add and multiply-accumulate patterns found in
+earable workloads.
+This provide a $4\times$ savings in CGRA network power at \SI{28}{\nano\meter}.
+Overall, SpEaC consumes less than two-thirds the power of SoftBrain at
+\SI{28}{\nm}.
+
+
+Other related work includes MAERI~\cite{kwon2018maeri} and
+SNAFU~\cite{gobieski2021snafu}. Similar to SpEaC, MAERI substrate is based on
+multiply-and-add trees. However, its system architecture and programming
+environment are focused on ML kernels. It is unclear how to map earable DSP
+kernels such as LU, Bilinear, Cholesky, and FFT directly on MAERI. There is no
+programming support for non-matrix computation (Bilinear), no hardware support
+on the substrate for complex arithmetic (FFT), and no control core for running
+non-multiply and add operations either (Cholesky and LU). {SNAFU integrates a
+control core with a CGRA and should therefore support the earable kernels.
+However, SNAFU supports a \textit{general purpose} CGRA substrate, not one
+optimized for linear algebra workloads, found commonly in machine learning and
+DSP applications. Unlike SpEaC, which targets linear algebraic workloads,
+SNAFU's general-purpose substrate has a high ratio of multiplier-less ALU FUs
+to multiplier FUs.  This means its performance for linear algebraic workloads
+is multiplier limited. As a point of comparison, \cite{gobieski2021snafu}
+reports SNAFU's performance on dense matrix multiply with $64\times 64$
+matrices. SpEaC outperforms SNAFU on this kernel by $72\times$. While
+SpEaC's \SI{1}{\giga\hertz} clock rate accounts for $20\times$ speed-up, the
+additional $3.6\times$ speed-up is a result of the greater parallelism
+achievable on SpEaC, due to its larger number of multipliers (16 vs 4), and
+SpEaC's nearly 1-1 ratio of adders to multipliers (while SNAFU has only one
+multiplier for every three adders). Similarly, while SNAFU's grid-based NoC
+topology is useful for general purpose programability (since it can support
+arbitrary dataflows), it consumes more power than a tree-based NoC (for
+SpEaC, we estimated that the tree-based NoC is $\sim{}4\times$ lower power
+than the grid-based NoC). Previous work~\cite{kwon2018maeri} has also observed
+that grid-based NoCs scale poorly in power and area relative to a tree-based
+NoC for the bandwidth values SpEaC targets. A direct comparison of SNAFU and
+SpEaC would nevertheless be interesting once  SNAFU toolchain is made public.
+
