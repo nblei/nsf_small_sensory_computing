@@ -1,0 +1,105 @@
+% Density adjustment parameters
+
+% Controls the amount of additional space between paragraphs
+\parskip 0.4\baselineskip
+% Controls the spacing between lines (1.00 is normal spacing)
+\linespread{1.00}
+
+%%% PAGE SETUP
+\special{papersize=8.5in,11in}
+%\special{portrait}
+
+% FORMATTING
+%==============================================================
+% Note that this is not perfectly 1 inch margin (larger) but
+% ps2pdf shrinks it a bit so the end result has perfect 1-inch margins
+%\setlength{\oddsidemargin}{-0.1in}
+%\setlength{\evensidemargin}{-0.1in}
+%\setlength{\textwidth}{6.8in}
+%\setlength{\textheight}{9.2in}
+%\setlength{\topmargin}{-0.2in}
+%\setlength{\headheight}{0in}
+%\setlength{\headsep}{0in}
+%\addtolength{\footskip}{-5pt}
+
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{9.0in}
+\setlength{\topmargin}{0in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+%\addtolength{\footskip}{-5pt}
+
+\marginparsep 0in
+\marginparwidth 0in
+\footskip 0.5in
+\columnsep 0.22in
+\parindent 0in
+\textfloatsep 0.10 in
+\dbltextfloatsep 0.10 in
+\floatsep 0.10 in
+\dblfloatsep 0.10 in
+\intextsep 0.10 in
+\sloppy
+
+%\renewcommand{\baselinestretch}{0.95}
+\newcommand{\SF}[1]{{\fontsize{6}{6pt}\sffamily#1}}
+
+% Changes to Times Roman font, which is one of the fonts allowed by NSF
+\usepackage{mathptmx}
+
+% For research.gov proposals pages should not be numbered,
+% their system adds page numbers as it puts together the overall proposal document
+\usepackage{nopageno}
+
+\renewcommand{\footnote}[1]{\errmessage{Footnotes are not allowed in an NSF Project Description!}}
+
+%==============================================================
+
+
+
+%%===========================================================================
+\makeatletter
+\renewcommand{\@seccntformat}[1]{
+\hspace{-2pt}{\csname the#1\endcsname}.\hspace{0.5em}}
+\makeatother
+
+\makeatletter
+\renewcommand{\section}{\@startsection
+  {section}               % name
+  {1}                     % level
+  {0pt}                   % indent
+  {0.4\baselineskip}      % beforeskip
+  {0.1\baselineskip}         % afterskip
+  {\fontsize{12}{\baselineskip} \rmfamily \bfseries}} % style
+\makeatother
+
+\makeatletter
+\renewcommand{\subsection}{\@startsection
+  {subsection}            % name
+  {2}                     % level
+  {0pt}                   % indent
+  {0.3\baselineskip}      % beforeskip
+  {0.1\baselineskip}         % afterskip
+  {\fontsize{12}{\baselineskip} \rmfamily \bfseries}} % style
+\makeatother
+
+\makeatletter
+\renewcommand{\subsubsection}{\@startsection
+  {subsubsection}               % name
+  {3}                     % level
+  {0pt}                   % indent
+  {0.2\baselineskip}         % beforeskip
+  {0.1\baselineskip}                   % afterskip
+  {\fontsize{11}{\baselineskip} \rmfamily \bfseries}} % style
+\makeatother
+
+%%===========================================================================
+
+\font\tenhv  = phvb at 8pt
+
+\renewcommand{\floatpagefraction}{0.7}
+\renewcommand{\dblfloatpagefraction}{0.7}
+
+\renewcommand\refname{References Cited}
