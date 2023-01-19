@@ -1,14 +1,65 @@
 Research objectives for earable computing are as follows:
 
 \begin{enumerate}
-\item Prototype SpEaC hardware in \(\leq \SI{65}{\nano\meter}\) technology;
+\item Build EarBench --- an earable computing benchmark suite --- by porting
+    all benchmark code to C and OpenMP, designing representative inputs for
+    each benchmark, and providing baselines on existing systems; enable
+    EarBench evaluations for heterogeneous systems --- both heterogeneous
+    SoCs, as well as multi-chip and even multi-device systems.  EarBench
+    --- software, data, \& build scripts --- as well as executable binaries
+    for major platforms --- will be published under an open source license in
+    order to enable commercial and academic research in earable computing.
+
+    EarBench will consist of a diverse and representative set of current and
+    future earable computing applications.  Data inputs will be drawn from
+    real world inputs (e.g., measured microphone, accelerometer, \& ECG data),
+    popular queries to current question-answering systems (e.g., Alexa,
+    Google Assistant, etc.).
+
+    EarBench will be published with a CMake based build system.  As CMake
+    is an open-source, cross platform build automation tool targeting all
+    major operating systems, and since nearly all computer architectures
+    have open source or proprietary C compilers, researchers will be able
+    to get EarBench running on a wide variety of systems quickly and easily.
+    For major architectures (e.g., ARMv7, ARMv8, x86\_64, i686, etc.),
+    we will provide prebuilt EarBench binaries.
+    
+\item
+    Prototype, and test an earable computer in in \(\leq
+    \SI{65}{\nano\meter}\) technology.
+    The candidate design, SpEaC (see Sec.~\ref{ssec:prelim1}), shows
+    significant performance and energy improvement over existing hardware
+    systems used in today's earable computers.
+
+    Prototyping subobjectives include physical design of SpEaC, including
+        design and placement of multiple power and clock domains, integration
+        of SpEaC with commercially licensable SRAMs and other memories, design
+        for test, chip tape-out, and packaging.  Multiple power domains are
+        used as SpEaC is a heterogeneous system, and thus power gating can be
+        used to reduce static power consumption. Similarly, clock and voltage
+        scaling can be used minimize energy or power consumption when one or
+        more of SpEaC's components has performance slack available.  Although
+        SpEaC's architecture and preliminary design are complete, architectural
+        research determining the optimal choice of operating points is
+        required.  PI Kumar is experienced in digital design, chip design,
+        tape-out and testing, and runs an undergraduate course in which
+        students design and tape-out processors which are manufactured by TSMC
+        and then tested at UIUC campus.  His research group also participates
+        in Intel's Chip Design Challenge, in manufacturing RISC-V processors in
+        Intel's \SI{16}{\nano\meter} technology.
+
+    Research subobjectives relating to testing include earable system design
+        and PCB design, porting EarBench applications to SpEaC, and collecting
+        measured EarBench results.  System design will account for various
+        earable sensors (e.g., microphone arrays, inertial motion units),
+        actuators (e.g., speakers, antennae), and hardware debug systems.
+        Porting EarBench applications to SpEaC requires annotating the EarBench
+        C code with pragmas which enable SpEaC's compiler to automatically
+        generate configurations and data streams for its spatial accelerator.
+
+
 \item Analyze SpEaC and existing earable hardware in a heterogeneous, networked
-     computational setting, in which computation can be offloaded from the earable
-     device onto a number of other devices, including smart watches, smart phones,
-     and high perfromance cloud systems;
-\item Extend EarBench into a bona fide earable computing benchmark suite by
-    porting all benchmark code to C and OpenMP, designing representative inputs
-    for each benchmark, and providing baselines on existing systems, including
-    SpEaC; enable EarBench evaluations for heterogeneous systems --- both
-    heterogeneous SoCs, as well as multi-chip and even multi-device systems.
+    computational setting, in which computation can be offloaded from the
+    earable device onto a number of other devices, including smart watches,
+    smart phones, and high perfromance cloud systems.  determine the 
 \end{enumerate}

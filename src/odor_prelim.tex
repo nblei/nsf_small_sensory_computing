@@ -39,7 +39,7 @@ three olfaction experts and asked them for a list of computational tasks. We
 then created a list of tasks that appeared in at least two of the above three
 lists.
 
-\subsubsection{Odor Processing Tasks}
+\textbf{Odor Processing Tasks.}
 The tasks in our finalized list are odor localization, odor classification,
 odor authentication, odor similarity, active odor cancellation, odor
 pleasantness estimation, and odor demixing.
@@ -161,8 +161,7 @@ leak or fire source, for example).
 %sensor, it is exceedingly difficult to determine if a faint signal is due
 %to a strong odorant source far away, or a weak odorant source nearby.
 
-\subsubsection{Algorithms}
-
+\textbf{Algorithms}
 To analyze a computer architecture's performance on \olfc{} workloads, a
 diverse and representative collection of \olfc{} algorithms underpinning the
 odor computational tasks is needed. To that end, nine benchmark kernels
@@ -602,38 +601,3 @@ possible alternatives.
 \label{fig:vs_baselines}
 \end{wrapfigure}
 
-% \subsection{\arch{} in a Full System}
-% Consider a wearable patch used to evaluate body odor. One such system was
-% prototyped in~\cite{zheng2019wearable}, with a six-sensor array of CNT based
-% chemical sensors.  However, the `compute' in this prototype consists of an
-% MSP430 MCU used \textit{only} to transmit data from the sensor array to a
-% nearby laptop where the \olfc{} actually occurs.  Further, the prototype is
-% powered by large  batteries, impractical for a wearable patch. To commoditize
-% such a wearable, \olfc{} should occur on the wearable, and the system should be
-% self powered.  Wearable piezoelectric harvesters are capable of harvesting
-% power from the human body at densities up to
-% \SI{3.8}{\micro\watt\per\milli\meter\squared}, however, we assume a much more
-% conservative \SI{0.38}{\micro\watt\per\milli\meter\squared} and a harvester
-% with area \SI{1}{\centi\meter\squared}. Figure~\ref{fig:duty_cycle} shows how
-% long \arch{} must sleep between runs of each algorithm in order to allow
-% harvesting of sufficient energy. For no algorithm must \arch{} sleep for longer
-% than \SI{30}{\milli\second}. This means that \arch{} is often \textit{not} the
-% bottleneck on the system, as piezoelectric harvesters often run at
-% \(<\SI{5}{\hertz}\)~\cite{galchev2012piezoelectric} to low hundreds
-% \si{\hertz}~\cite{hu2007piezoelectric}.  Thus \arch{} can support the
-% computational needs of energy constrained \olfc{} devices, such as wearable
-% patches.
-% %\color{black}
-% 
-% 
-% \begin{figure}
-%     \centering
-%     \includegraphics[width=\linewidth]{./figs/duty_cycle.png}
-%     \caption{\small
-%         The energy harvesting period needed between runs of each algorithm
-%         on a \olfc{} system using \arch{} and a \SI{0.38}{\micro\watt}
-%         piezoelectric energy harvester.
-%     }
-%     \label{fig:duty_cycle}
-% \end{figure}
-% 
