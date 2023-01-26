@@ -1,28 +1,79 @@
-To exploit these opportunities in sensory processing, we propose to develop
+
+We ask the question: What kind of programmable hardware will be needed to
+support earable computing in the future?  Today's programmable hardware
+platforms for earables~\cite{} need to support only limited computation and
+sensing and typically consist of either microcontrollers or DSPs or both,
+running at low to moderate frequencies. The choice of the earable
+microcontrollers (Cortex M4 and M7 cores are popular due to their DSP
+extensions) and DSPs (Tensilica HiFi DSPs are popular due to their relatively
+low power), their number, and their operating frequencies are limited by the
+capacity limitations of today's earable batteries (e.g., AirPods Pro uses a
+\SI{45.4}{\milli\ampere\hour}, \SI{3.7}{\volt} battery~\cite{}).
+
+Analogously, we ask the question: What kind of programmable hardware will be needed to
+support olfactory computing in the future?
+Previous work on \olfc{} has largely focused on sensing applications. A lot of
+work exists on commercial and academic e-noses for specific tasks, such as wine
+classification~\cite{buratti2004characterization}, evaluating readiness of blue
+cheeses~\cite{valente2018cheeses}, assessing seafood freshness~\cite{grassi2022seafood}, and
+diagnosing diseases in humans and animals~\cite{gardner2000electronic,
+binson2021discrimination, va2021noninvasive, d2010investigation}.  While many
+e-noses use electrical resistive sensors, others use gas chromatography-mass
+spectrometry~\cite{electronic_sensor_technology, alpha_2018, pan2014early},
+which can provide high fidelity chemical detection, but requires a large,
+expensive, and power-hungry system, and is thus not suitable for many \olfc{}
+applications such as a smart-bandage.
+%Fig.~\ref{fig:man_vs_machine} shows the similarities between \olfc{} and
+%human olfaction.
+Other than sensing, some recent work has begun to re-look at the \textit{odor
+synthesis} problem.%\footnote{only 60 years after the disastrous introduction of
+%Smell-O-Vision~\cite{smith_kiger_2006}}
+Odor synthesis is the creation of
+chemicals or chemical mixtures which are perceived to have a certain odor.
+There are several contemporary attempts at commercializing odor synthesis,
+including a digital scent diffuser - AromaShooter~\cite{aromajoin_corporation},
+and wearable devices such as jewelry~\cite{tillotson2006scent} and
+headbands~\cite{amores2018promoting}. Odor synthesis has also received interest
+within the context of extended reality.  VR SCENT~\cite{olorama_technology}
+augments a standard VR system with odor synthesis to assess neuorological
+trauma, while The Smell Engine~\cite{bahremand2022smell} is a general odor
+synthesis pipeline for VR applications.
+No prior work addresses
+the organization and design of the olfactory processor itself.
+
+
+To exploit these opportunities in earable and olfactory processing:
+\iffalse
+we propose to develop
 tools for computer architects, hardware designers, software engineers, and
 application developers to better understand sensory computing's software and
 hardware ecosystems.  Specifically, the proposed research has two main thrusts,
 the first related to \textit{earable computing} and the second to \textit{\olfc}.
 The research goals along both thrusts parallel one another:
+\fi
 
-1. We will design and publish (open source) benchamark suites for earable and
-\olfc{}.  Researchers and industry require a benchmark suites
-consisting of representative applications and associated input data.  Benchmarks
+1. We will design and publish (open source) benchmark suites for earable and
+\olfc{}.  
+%Researchers and industry require a benchmark suites
+%consisting of representative applications and associated input data.  
+Benchmarks
 will be written in the C programming language to ensure portability across
 existing hardware.  All benchmarks will be published as scalar
 and multithreaded workloads (using OpenMP API) to enable benchmarking on single
 core, multicore, SMT, and SIMT architectures.
 
-2. We will prototype an earable computing processor and an \olfc{}
+2. We will explore computer architectures for  earable computing and \olfc{}. The exploration will look at both heterogeneous solutions where a system-on-chip targets each computational characteristic with a different component ({\em accelerator}) as well as monolithic solutions where a single processor targets all characteristics. Both classes of solutions could be interesting since both cost and efficiency are concerns.
+
+3. We will prototype an earable computing processor and an \olfc{}
 processor, and evaluate the prototypes on the benchmark suites.  This will
 give researchers a rigorous performance baseline to compare against, and will
 also enable potential technology transfer and commercialization of our sensory
 processors.
 
-3. Sensory processing may be amenable to computational offloading wherein the
-sensory processor itself is mainly used to collect sensor data (e.g.,
+4. Both earable computing and \olfc{}  may be amenable to computational offloading wherein the
+the processor itself is mainly used to collect sensor data (e.g.,
 microphones, odor sensors, etc.) and drive actuators (e.g., speakers, lights,
 microfluidics, antennae, etc.) while the majority of the computational
-requirements of the sensory applications are satisfied on other devices, such
+requirements of the applications are satisfied on other devices, such
 as other wearable or personal devices (smart watch, smart phone, etc.), or
-offladed to cloud or edge server nodes.
+offloaded to cloud or edge server nodes. We will develop offloading-based implementations of applications for different earable and olfactory processor architectures.
