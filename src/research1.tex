@@ -15,7 +15,8 @@ system-level constraints.
 
 
 \begin{table}[]
-\label{tab:earbench}
+\centering
+\label{tab:earbench_metrics}
 \caption{Representative earable applications: Inputs, outputs and timing requirements.}
 \tiny
 \begin{tabular}{ll}
@@ -64,7 +65,6 @@ Two 3D vectors, the displacement estimates and their \\
 EKF & IMU data 75k samples / Orientation of IMU /  $\leq \SI{1}{\second}$\\
 \bottomrule
 \end{tabular}
-\label{tab:requirements}
 \end{table}
 
 As preliminary analysis,
@@ -91,40 +91,42 @@ was considered also in terms of underlying algorithms (e.g., DSP vs ML, RNN vs
 CNN vs BERT) and use cases (e.g., authentication vs recognition, classification
 vs NLP, tracking vs localization).
 
-We will continue the analysis to finalize the list of representative computational tasks and then build EarSuite --- the first earable computing benchmark suite --- by porting
-    all benchmark code to C and OpenMP, designing representative inputs for
-    each benchmark, and providing baselines on existing systems. 
+We will continue the analysis to finalize the list of representative
+computational tasks and then build EarSuite --- the first earable computing
+benchmark suite --- by porting all benchmark code to C and OpenMP, designing
+representative inputs for each benchmark, and providing baselines on existing
+systems.
     %We will enable
     %EarSuite evaluations for heterogeneous systems --- both heterogeneous
     %SoCs, as well as multi-chip and even multi-device systems.  
-    EarSuite
-    --- software, data, \& build scripts --- as well as executable binaries
-    for major platforms --- will be published under an open source license in
-    order to enable commercial and academic research in earable computing.
+EarSuite --- software, data, \& build scripts --- as well as executable
+binaries for major platforms --- will be published under an open source license
+in order to enable commercial and academic research in earable computing.
 %    EarBench will consist of a diverse and representative set of current and
  %   future earable computing applications.  
- Data inputs will be drawn from
-    real world inputs (e.g., measured microphone, accelerometer, \& ECG data),
-    popular queries to current question-answering systems (e.g., Alexa,
-    Google Assistant, etc.).
+ Data inputs will be drawn from real world inputs (e.g., measured microphone,
+ accelerometer, \& ECG data), popular queries to current question-answering
+ systems (e.g., Alexa, Google Assistant, etc.).
 
-    EarSuite will be published with a CMake based build system.  As CMake
-    is an open-source, cross platform build automation tool targeting all
-    major operating systems, and since nearly all computer architectures
-    have open source or proprietary C compilers, researchers will be able
-    to get EarSuite running on a wide variety of systems quickly and easily.
-    For major architectures (e.g., ARMv7, ARMv8, x86\_64, i686, etc.),
-    we will provide prebuilt EarSuite binaries.
+EarSuite will be published with a CMake based build system.  As CMake is an
+open-source, cross platform build automation tool targeting all major operating
+systems, and since nearly all computer architectures have open source or
+proprietary C compilers, researchers will be able to get EarSuite running on a
+wide variety of systems quickly and easily. For major architectures (e.g.,
+ARMv7, ARMv8, x86\_64, i686, etc.), we will provide prebuilt EarSuite binaries.
 
-The next goal is to explore computer architectures for earable processing. Naturally, the question arises --
+The next goal is to explore computer architectures for earable processing.
+Naturally, the question arises --
 %Are today's hardware platforms not good enough to support earable applications? Second, 
-what are the key computational characteristics that any earable computing platform should target?
+what are the key computational characteristics that any earable computing
+platform should target?
 % We analyze the EarBench suite to identify the key
 % computation kernels in earable  applications.
- Figure~\ref{fig:kernels_breakdown} shows the performance breakdown of some representative applications
- across constituent kernels on a single Cortex A72 (profiling was performed on Raspberry Pi 4).  Applications were
- compiled with gcc 9.2 and rustc 1.5 with `O3' optimizations (which include
- SIMD auto-vectorization).
+Figure~\ref{fig:kernels_breakdown} shows the performance breakdown of some
+representative applications across constituent kernels on a single Cortex A72
+(profiling was performed on Raspberry Pi 4).  Applications were compiled with
+gcc 9.2 and rustc 1.5 with `O3' optimizations (which include SIMD
+auto-vectorization).
  
  
  
