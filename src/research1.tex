@@ -69,27 +69,27 @@ EKF & IMU data 75k samples / Orientation of IMU /  $\leq \SI{1}{\second}$\\
 
 As preliminary analysis,
 we conducted a comprehensive survey of earable applications research and
-practice~\cite{}, including over 50 papers on http://esense.io, and interviewed
-three earable computing domain experts. We observed that most research and
-commercial earable computing applications fall into one of four categories: (1)
-Human-Machine Interface (HMI) applications that allow the earable user to
-interact with the device (and vice-versa). In the absence of traditional
-interfaces (e.g., keyboard, mouse, touchscreen), interactions are typically via
-sound and taps. (2) Audio applications that decode, manipulate, and playback
-audio data streams (e.g., phone calls, podcasts, acoustic augmented reality
-(AAR)). (3) Analytics applications, such as ECG monitors, that are
-computation-heavy but should ideally execute locally on the earable device.
-Finally, (4) Spatial Awareness applications that localize the user, their
-movements, head gestures, etc. for applications in AR/VR, gaming, location-
-specific alerts, etc. These spatial tracking applications are often
-characterized by sensor fusion engines, and are thus assigned to a separate
-category. To have a representative, but diverse suite, we then selected from
-each category 2-4 applications with different computational requirements, as
-determined by profiling (Table~\ref{tab:earbench_metrics}), and diverse
-sensor-based inputs. Diversity was considered also in terms of underlying
-algorithms (e.g., DSP vs ML, RNN vs CNN vs BERT) and use cases (e.g.,
-authentication vs recognition, classification vs NLP, tracking vs
-localization).
+practice~\cite{waverly, nuraphone, scribd, bible, peckhamsarkar_2019},
+including over 50 papers on http://esense.io, and interviewed three earable
+computing domain experts. We observed that most research and commercial earable
+computing applications fall into one of four categories: (1) Human-Machine
+Interface (HMI) applications that allow the earable user to interact with the
+device (and vice-versa). In the absence of traditional interfaces (e.g.,
+keyboard, mouse, touchscreen), interactions are typically via sound and taps.
+(2) Audio applications that decode, manipulate, and playback audio data streams
+(e.g., phone calls, podcasts, acoustic augmented reality (AAR)). (3) Analytics
+applications, such as ECG monitors, that are computation-heavy but should
+ideally execute locally on the earable device. Finally, (4) Spatial Awareness
+applications that localize the user, their movements, head gestures, etc. for
+applications in AR/VR, gaming, location- specific alerts, etc. These spatial
+tracking applications are often characterized by sensor fusion engines, and are
+thus assigned to a separate category. To have a representative, but diverse
+suite, we then selected from each category 2-4 applications with different
+computational requirements, as determined by profiling
+(Table~\ref{tab:earbench_metrics}), and diverse sensor-based inputs. Diversity
+was considered also in terms of underlying algorithms (e.g., DSP vs ML, RNN vs
+CNN vs BERT) and use cases (e.g., authentication vs recognition, classification
+vs NLP, tracking vs localization).
 
 We will continue the analysis to finalize the list of representative computational tasks and then build EarSuite --- the first earable computing benchmark suite --- by porting
     all benchmark code to C and OpenMP, designing representative inputs for
@@ -212,14 +212,17 @@ operations, for example).
   \caption{
   \small
   Architecture of \arch{}.}
-  \label{fig:arch}
+  \label{fig:earable_arch}
 \end{figure}
 
- We will use EarSuite to drive a design space exploration of computer architectures for earable processing. An example computer architecture (that we have preliminarily explored~\cite{}) is  a
+We will use EarSuite to drive a design space exploration of computer
+architectures for earable processing. An example computer architecture (that we
+have preliminarily explored~\cite{bleier2022rethinking}) is  a
 stream-programmed~\cite{nowatzki2017stream} coarse-grained reconfigurable
-spatial architecture (Figure~\ref{fig:earable_arch}) whose 
-computation substrate consists of a set of  adders and multipliers (since earable applications are dominated by inner-product-based computation).
- A fat distribution
+spatial architecture (Figure~\ref{fig:earable_arch}) whose computation
+substrate consists of a set of  adders and multipliers (since earable
+applications are dominated by inner-product-based computation).
+A fat distribution
 tree~\cite{leiserson1985fat}  feeds the multiplier units.  The products
 of the multiplier units are forwarded to the adders organized in an `augmented
 reduction tree', which allows a single tree to perform multiple inner
@@ -240,57 +243,68 @@ logical vector multiplier}.
 %which perform complex multiplication and
 %addition on streams of complex numbers (in array-of-structs form). In order to
 %support this the vectorized PEs 
-Each logical vector multiplier can be configured to either perform a 2x32 bit multiplication or a 2x32 bit
-multiplication in which one of the 64-bit inputs' top and bottom 32-bits are
-swapped.
-Also, since $i^2 = -1$, the real component of
-the complex product is produced by computing the difference
-of two of the partial products while the imaginary component is produced by
-computing the sum of the other two partial products. To support this,  adjacent adders in level 3 of the tree
-form  \textit{logical vector adders}. The `left' adder in a logical vector adder can
-be configured to perform subtraction as well as addition.
-The control core executes code that does not fit
-well on the reconfigurable substrate, including non-multiply
-or add operations in the DSP kernel code (e.g., square-root and divide operations in LU and Cholesky). 
+Each logical vector multiplier can be configured to either perform a 2x32 bit
+multiplication or a 2x32 bit multiplication in which one of the 64-bit inputs'
+top and bottom 32-bits are swapped. Also, since $i^2 = -1$, the real component
+of the complex product is produced by computing the difference of two of the
+partial products while the imaginary component is produced by computing the sum
+of the other two partial products. To support this,  adjacent adders in level 3
+of the tree form  \textit{logical vector adders}. The `left' adder in a logical
+vector adder can be configured to perform subtraction as well as addition. The
+control core executes code that does not fit well on the reconfigurable
+substrate, including non-multiply or add operations in the DSP kernel code
+(e.g., square-root and divide operations in LU and Cholesky).
 
-There are several other computer architectures possible as well. 
-One possibility is to support multiple fixed function accelerators on the earable SoC each targeting a different set of kernels. For example, an SoC with a CPU, an ML accelerator, and an FFT accelerator looks attractive for our applications. However, there are several disadvantages of such an approach. One, the field of earable computing is relatively new and algorithms are still evolving. Any system with fixed functions ASICs may become obsolete quickly. 
-Second,  
-a collection of special purpose accelerators will fail to provide the requisite performance for kernels that do not map well to an existing accelerator. For example, LU, Bilinear, and Cholesky cannot be mapped directly on an ML accelerator or an FFT accelerator and will need to be run on the CPU at high performance cost. Similarly, a given kernel may not fit its fixed function accelerator well depending on the input. For example, FFT size in tinySR, depends on input audio length and, for our
-microphone input, varies from 32-point to 
-1024-point, HRTF calls a 4096-point FFT, Ambisonic uses a 512 or 1024-point FFT, etc. Many FFT accelerators are optimized for a specific size~\cite{fft01} and will not run other FFTs of other sizes efficiently~\cite{fft02}. 
-Nevertheless, a heterogeneous system has benefits in terms of reusability and cost. We will compare the spatial approaches against heterogeneous approaches.
+There are several other computer architectures possible as well. One
+possibility is to support multiple fixed function accelerators on the earable
+SoC each targeting a different set of kernels. For example, an SoC with a CPU,
+an ML accelerator, and an FFT accelerator looks attractive for our
+applications. However, there are several disadvantages of such an approach.
+One, the field of earable computing is relatively new and algorithms are still
+evolving. Any system with fixed functions ASICs may become obsolete quickly.
+Second,  a collection of special purpose accelerators will fail to provide the
+requisite performance for kernels that do not map well to an existing
+accelerator. For example, LU, Bilinear, and Cholesky cannot be mapped directly
+on an ML accelerator or an FFT accelerator and will need to be run on the CPU
+at high performance cost. Similarly, a given kernel may not fit its fixed
+function accelerator well depending on the input. For example, FFT size in
+tinySR, depends on input audio length and, for our microphone input, varies
+from 32-point to 1024-point, HRTF calls a 4096-point FFT, Ambisonic uses a 512
+or 1024-point FFT, etc. Many FFT accelerators are optimized for a specific
+size~\cite{fft01} and will not run other FFTs of other sizes
+efficiently~\cite{fft02}. Nevertheless, a heterogeneous system has benefits in
+terms of reusability and cost. We will compare the spatial approaches against
+heterogeneous approaches.
 
 We will also prototype and test an earable computer in TSMC \(\leq
-    \SI{65}{\nano\meter}\) technology.
-    The candidate design, the spatial architecture described above, shows
-    significant performance and energy improvement over existing hardware
-    systems used in today's earable computers.
-    Prototyping sub-objectives include physical design of the architecture to minimize energy, including
-        design and placement of multiple power and clock domains, integration
-        of the architecture with commercially licensable SRAMs to minimize cost, and design
-        for test, chip tape-out, and packaging for workforce development.  Multiple power domains are
-        used as the architecture is a heterogeneous system (control core and reconfigurable substrate), and thus power gating can be
-        used to reduce static power consumption. Similarly, clock and voltage
-        scaling can be used minimize energy or power consumption when one or
-        more of the architecture's components has performance slack available.  
-        Although we have a preliminary architecture,
-        %SpEaC's architecture and preliminary design are complete, architectural
-        %research 
-        a careful exploration would be needed to determine the optimal choice of operating points.   Similarly, testing sub-objectives include earable system design
-        and PCB design, porting EarSuite applications to the chip, and collecting
-        measured EarSuite results.  System design will incorporate multiple
-        earable sensors (e.g., microphone arrays, inertial motion units),
-        actuators (e.g., speakers, antennae), and a hardware debug system.
-        Porting EarSuite applications to the chip requires annotating the EarSuite
-        C code with pragmas which enable the architecture's compiler to automatically
-        generate configurations and data streams for its spatial accelerator.
-        PI Kumar is experienced in digital design, chip design,
-        tape-out and testing, and runs an undergraduate course in which
-        students design and tape-out processors which are manufactured by TSMC
-        and then tested at UIUC campus.  His research group also participates
-        in Intel's Chip Design Challenge, in manufacturing RISC-V processors in
-        Intel's \SI{16}{\nano\meter} technology. The research group has also recently taped out several flexible chips~\cite{}.
+\SI{65}{\nano\meter}\) technology. The candidate design, the spatial
+architecture described above, shows significant performance and energy
+improvement over existing hardware systems used in today's earable computers.
+Prototyping sub-objectives include physical design of the architecture to
+minimize energy, including design and placement of multiple power and clock
+domains, integration of the architecture with commercially licensable SRAMs to
+minimize cost, and design for test, chip tape-out, and packaging for workforce
+development.  Multiple power domains are used as the architecture is a
+heterogeneous system (control core and reconfigurable substrate), and thus
+power gating can be used to reduce static power consumption. Similarly, clock
+and voltage scaling can be used minimize energy or power consumption when one
+or more of the architecture's components has performance slack available.
+Although we have a preliminary architecture, a careful exploration would be
+needed to determine the optimal choice of operating points.   Similarly,
+testing sub-objectives include earable system design and PCB design, porting
+EarSuite applications to the chip, and collecting measured EarSuite results.
+System design will incorporate multiple earable sensors (e.g., microphone
+arrays, inertial motion units), actuators (e.g., speakers, antennae), and a
+hardware debug system. Porting EarSuite applications to the chip requires
+annotating the EarSuite C code with pragmas which enable the architecture's
+compiler to automatically generate configurations and data streams for its
+spatial accelerator. PI Kumar is experienced in digital design, chip design,
+tape-out and testing, and runs an undergraduate course in which students design
+and tape-out processors which are manufactured by TSMC and then tested at UIUC
+campus. His research group also participates in Intel's Chip Design Challenge,
+in manufacturing RISC-V processors in Intel's \SI{16}{\nano\meter} technology.
+The research group has also recently taped out several flexible
+chips~\cite{bleier2022flexicores, Bleier_2023}.
 
 
 \begin{figure}[htbp]
@@ -331,5 +345,13 @@ Other than energy benefits, local computation may often be preferred also for im
 %as well as 
 latency, privacy, and usability (since a remote device may not always be available or accessible).
 
-At the same time, applications such as Albert which have high computation and memory requirements may need to be offloaded to a remote device both for energy and capability reasons. We will analyze both proposed hardware and existing earable hardware in a heterogeneous, networked computational settings, in which computation can be offloaded from the earable device onto a number of other devices, including smart watches,  smart phones, and high performance cloud systems. We will use HPVM~\cite{} for distributed implementation of the EarSuite benchmarks. The distributed implementations will be open sourced and released publicly. 
+At the same time, applications such as Albert which have high computation and
+memory requirements may need to be offloaded to a remote device both for energy
+and capability reasons. We will analyze both proposed hardware and existing
+earable hardware in a heterogeneous, networked computational settings, in which
+computation can be offloaded from the earable device onto a number of other
+devices, including smart watches,  smart phones, and high performance cloud
+systems. We will use HPVM~\cite{ejjeh2022hpvm} for distributed implementation
+of the EarSuite benchmarks. The distributed implementations will be open
+sourced and released publicly.
 %\end{enumerate}

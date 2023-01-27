@@ -175,7 +175,9 @@ ANN, K-Means, and KNN.
 In the odor similarity task, the goal is to estimate the odor similarity of two
 different chemical mixtures.  Traditionally, this has been done by first
 identifying the chemical structure of the mixtures' constituent chemicals via
-\gcms{}\footnote{However, it can also be done with sensor data}.  These
+\gcms{}
+% NOTE: Footnotes are not allowed in NSF Project Description
+(However, it can also be done with sensor data).  These
 chemical structures are then mapped to fixed length vectors from an inner
 product space, and then the mixtures are represented by weighted sums of the
 constituent chemical vectors.  Finally, the similarity of the two chemicals is
@@ -438,51 +440,57 @@ datatypes of varying width, as wide adders and multipliers can be
 recursively built from narrow adders and multipliers.
 Wide adders are built from narrow adders via carry-out propagation.
 
-We will explore other computer architectures as well for olfactory processing targeting wearable and distributed sensor networking
-    olfactory applications.  Many ultra-low power candidate architectures
-    currently exist, including ultra-low power microcontrollers~\cite{} and GPUs~\cite{},
-    as well as \(<\si{\milli\watt}\) spatial architectures~\cite{}.
-    Preliminary results analyzing olfactory applications
-    and their computational requirements  show that,
-    for many applications, performance requirements are lax, and absolute
-    computational and memory requirements are low.  This suggests that the
-    architectural design space considered must go beyond looking at just
-    computer organization and design, but must encompass memory design and
-    operating points.
-    Due to lax performance requirements and low computational requirements,
-    olfactory computing is likely a strong candidate for near or sub-threshold
-    computing~\cite{}.  Thus the design space exploration will include
-    amenability to and impact of voltage scaling into the near and sub-threshold
-    regions.  Although this type of work has been done for CPU and GPU based
-    architectures, it has, to the best of our knowledge, never been done for
-    reconfigurable spatial architectures.
-    Also, as many olfactory applications require very small amounts of data memory,
-        memory design will be an important aspect of the design space
-        exploration.  The size, geometry, and number of SRAM banks will be
-        explored.  Additionally, since some applications require trivial
-        amounts of data memory, we will also consider memories composed wholly
-        or partially out of latches and flip-flops, rather than SRAM cells.
-        Although SRAM cells are typically smaller and consume less power than
-        flip-flops and latches at nominal voltage, SRAM cells are generally not
-        ammenable to voltage scaling.  Thus, at low voltages, latch and
-        flip-flop based memories may consume less power than an equivalently
-        sized SRAM.
+We will explore other computer architectures as well for olfactory processing
+targeting wearable and distributed sensor networking olfactory applications.
+Many ultra-low power candidate architectures currently exist, including
+ultra-low power microcontrollers~\cite{heller2019microwatt} and GPUs~\cite{},
+as well as \(<\si{\milli\watt}\) spatial
+architectures~\cite{kersey2017lightweight}. Preliminary results analyzing
+olfactory applications and their computational requirements  show that, for
+many applications, performance requirements are lax, and absolute computational
+and memory requirements are low.  This suggests that the architectural design
+space considered must go beyond looking at just computer organization and
+design, but must encompass memory design and operating points. Due to lax
+performance requirements and low computational requirements, olfactory
+computing is likely a strong candidate for near or sub-threshold
+computing~\cite{raychowdhurry2005computing}. Thus the design space exploration
+will include amenability to and impact of voltage scaling into the near and
+sub-threshold regions. Although this type of work has been done for CPU and GPU
+based architectures, it has, to the best of our knowledge, never been done for
+reconfigurable spatial architectures. Also, as many olfactory applications
+require very small amounts of data memory, memory design will be an important
+aspect of the design space exploration.  The size, geometry, and number of SRAM
+banks will be explored.  Additionally, since some applications require trivial
+amounts of data memory, we will also consider memories composed wholly or
+partially out of latches and flip-flops, rather than SRAM cells. Although SRAM
+cells are typically smaller and consume less power than flip-flops and latches
+at nominal voltage, SRAM cells are generally not ammenable to voltage scaling.
+Thus, at low voltages, latch and flip-flop based memories may consume less
+power than an equivalently sized SRAM.
 
 We will also prototype and test an olfactory processing chip in TSMC \(\leq
-    \SI{65}{\nano\meter}\) technology.
-    The candidate design, the heterogeneous architecture described above, provides ample opportunities for architecture and physical design innovations in order to minimize energy of the prototype chip, especially since near-threshold processing would be involved. PI Kumar teaches a chip tapeout class every year where several RISC-V-based SoCs with a microcontroller core and multiple accelerators have already been taped out and tested successfully. The experience and the resources would be leveraged in the proposed prototyping effort.
+\SI{65}{\nano\meter}\) technology. The candidate design, the heterogeneous
+architecture described above, provides ample opportunities for architecture and
+physical design innovations in order to minimize energy of the prototype chip,
+especially since near-threshold processing would be involved. PI Kumar teaches
+a chip tapeout class every year where several RISC-V-based SoCs with a
+microcontroller core and multiple accelerators have already been taped out and
+tested successfully. The experience and the resources would be leveraged in the
+proposed prototyping effort.
 
-    Testing sub-objectives include olfactory system design
-        and PCB design, porting OlfacSuite applications to the chip, and collecting
-        measured OlfacSuite results.  System design will incorporate multiple
-        odor sensors and a hardware debug system.
-        Porting OlfacSuite applications to the chip requires annotating the OlfacSuite
-        C code with pragmas which enable the architecture's compiler to automatically
-        generate configurations and data streams for its spatial accelerator.
+Testing sub-objectives include olfactory system design and PCB design, porting
+OlfacSuite applications to the chip, and collecting measured OlfacSuite
+results.  System design will incorporate multiple odor sensors and a hardware
+debug system. Porting OlfacSuite applications to the chip requires annotating
+the OlfacSuite C code with pragmas which enable the architecture's compiler to
+automatically generate configurations and data streams for its spatial
+accelerator.
        
-Finally, we will also analyze both proposed and existing olfactory computing hardware in a heterogeneous, networked
-     computational setting, in which computation can be offloaded from the olfactory
-     device onto a number of other devices, including smart watches, smart phones,
-     and high performance cloud systems. The work will be analogous to what was described earlier in context of earables.
+Finally, we will also analyze both proposed and existing olfactory computing
+hardware in a heterogeneous, networked computational setting, in which
+computation can be offloaded from the olfactory device onto a number of other
+devices, including smart watches, smart phones, and high performance cloud
+systems. The work will be analogous to what was described earlier in context of
+earables.
 
 
