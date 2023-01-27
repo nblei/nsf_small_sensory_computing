@@ -319,41 +319,148 @@ Termination of Kmeans algorithm is known to be NP-Hard~\cite{aloise2009np}.  In 
 for odor processing, KMeans often terminates quickly~\cite{yang2018human,
 zheng2019wearable}.
 
+We make several observations about the computational characteristics of the kernels that may impact any architecture we build for these workloads.
+First, none of the
+kernels are integer kernels --- all kernels require fixed-point arithmetic.
+Thus hardware support for fixed-point operations is necessary for energy
+efficient computation of olfactory workloads.
+Second, none of the kernels require complex numbers --- this is very different
+than audio and image sensor processing which makes copious use of classical
+frequency domain signal processing algorithms~\cite{mandic2007complex, paris2011local}.
+Unlike hearing and sight, which arise from sensing wave-based phenomena
+(i.e., light and pressure waves),
+the sensation of odor arises from sensing non-wave chemicals.  Thus, there
+is no frequency or phase component to the sensed odor signal. Principal
+component analysis (PCA) does include computing eigenvalues, but since
+correlation matrices are symmetric, the eigenvalues are necessarily real
+valued.  Thus hardware support for complex arithmetic and fast Fourier transform
+is not required.
+Third, the primary arithmetic primitives are multiplication and addition, often
+in the form of multiply-accumulates needed for evaluation of linear functions,
+as found in ANN, SVM, LDA, PCA, AngleDist, and OMP.  Although many kernels use
+non-linear operations, these operations are often either multilinear (i.e.,
+multiplication of variables rather than variables by fixed constant), or are
+limited in number relative to multiplications and additions, and they are
+temporally isolated between long sequences of linear and multilinear
+operations.
+%\footnote{Due to the computational simplicity of reLU activations,
+%we ignore these in analysis of non-linear vs linear interspersedness.}  
+Thus,
+dedicated hardware to accelerate linear operations is likely to provide
+significant benefits for olfactory application workloads.
+Fourth, there is a large spread in working set size among kernels, with some
+kernels having very small working sets which can be supported by a very small
+data memory, or even with a large register file, while several kernels require
+significantly more data memory.  In fact, kernels such as PF can be made
+to require drastically more memory by increasing the number of particles used
+in its Monte Carlo simulation, which can lead to better localization accuracy.
+This wide range in memory requirements suggests that a scalable memory
+organization is likely to provide energy and power benefits for olfactory
+applications.
+Fifth, many of the tasks support vectorization, even auto-vectorization, which
+indicates that parallel architectures are likely to perform well on olfactory
+application workloads.
+%These kernel characteristics are summarized
+%in Table~\ref{tab:kernels}, with data derived from analysis of implementations
+%of the kernels for a scalar CPU with packed SIMD ISA extension.
 
+Based on the above observations, we will explore architectures for olfactory processing. 
+Olfactory computing is applicable in many application domains. However, in many
+domains, the light computational requirements of its algorithmic primitives
+means the attention of architects is little needed. XR headsets, able to power
+high resolution 3D graphics, for example, will have little trouble running
+olfactory computing tasks.  There are, however, application domains with
+extreme constraints which make olfactory computing interesting to architects.
+Form factors such as wearables, (earrings, pendants, brooches, etc), bandages
+(e.g., for detecting infections), adhesives (e.g., for body odor monitoring),
+packaging (e.g., smart packages that detect food spoilage), swabs (for breath,
+urine, body fluids-based diagnostics, for example), sensors-in-the-wild ( e.g.,
+air quality monitoring, surface and ground water quality monitoring), etc., may
+only allow for energy harvesting.  Field deployed sensors may need to maximize
+limited battery energy capacities over long periods, or be self-powered.  In
+these domains, both power and energy are stringent limitations.
 
+ 
+%Fig.~\ref{fig:arch} presents an overview of \arch{}.
+%\arch{}'s aim is to support energy efficient \olfc{}, given the
+%lax performance requirements of \olfc{} applications, and the
+%constrained energy budget available to edge devices.  Thus, \arch{} is designed
+%for operating points at below nominal voltage.
 
-    
-\item
-    Rapid development of small and ultra-low power odor sensors means that, for
-    the first time, computing power consumption may be the limiting factor
-    in olfactory or chemical processing, rather than sensor power
-    consumption.  In light of this development, we will perform an exploration
-    of the architectural design space in order to identify good architectures
-    for \olfc{} systems targeting wearable and distributed sensor networking
+\begin{figure}
+\centering
+    \includegraphics[width=\linewidth]{arch_odor.png}
+    \caption{\small
+            An example organization of olfactory computing processor as an MCU with Vector-MAC-unit and CGRA
+            accelerators. Since the processor aims for energy efficiency, achieved by
+            operating at low voltage and frequency, the processor exploits the lack
+            of voltage scaling available to SRAMs to enable multiple SRAM
+            accesses on a single port per clock cycle.
+        }
+    \label{fig:arch}
+\end{figure}
+
+An example architecture of a programmable
+ultra-low-power olfactory computing hardware platform supports low frequency
+and voltage operation; programmability is supported to lower costs and to
+maintain generality in a domain where applications are likely to evolve.  Our preliminary
+architecture (Fig.~\ref{fig:arch}), is a heterogeneous reconfigurable
+odor monitoring and analysis architecture consisting of a \SI{32}{\bit} 
+MCU with two integrated accelerators, both supporting fixed-point
+operations. 
+The first accelerator is a \SI{128}{\bit} packed SIMD unit which accelerates
+fixed-point fused muliply accumulate operations on 4, 8, 16, and \SI{32}{\bit}
+datatypes, to support the copious multiply-accumulates found in ANN, SVM,
+LDA, PCA, VAD, and OMP algorithms.
+Unlike a typical packed SIMD ISA extension, the processor's vector-multiply-accumulate unit does not have an
+additional SIMD register file.  Instead, data is accessed directly from memory,
+which is made possible by the discrepancy between the core voltage at the
+minimal energy operating points of processor, and the
+SRAM's nominal voltage required to ensure memory retention. Additionally,
+since the size of data memory required by many olfactory applications
+is small, the overhead of a dedicated SIMD register file may be large relative
+to data memory in its entirety.
+The second accelerator is a coarse-grained
+reconfigurable streaming dataflow architecture with several heterogeneous PEs
+(adder PEs, and multiply-accumulate PEs) arranged in a grid, and
+utilizing a bufferless, single-cycle, multi-hop routing network, as
+in~\cite{wang2019hycube, gobieski2021snafu}. Each PE contains a small
+(\SI{16}{\byte}) buffer, in which it can store model parameters, as well as
+accumulated sums. PEs are capable of \SI{32}{\bit} width packed-SIMD
+execution of multiplies and adds (i.e., $1\times$ \SI{32}{\bit} operation,
+$2\times$ \SI{16}{\bit} operations, etc.).  The dataflows supported  on
+the CGRA enables mapping convolution layers with various kernel sizes and strides.
+This is important as although currently most olfactory ANNs are MLPs,
+there do exist CNNs for olfactory applications, and the choice of the best
+model for olfactory tasks is still being litigated.
+Both accelerators support efficient packed SIMD addition and multiplication for
+datatypes of varying width, as wide adders and multipliers can be
+recursively built from narrow adders and multipliers.
+Wide adders are built from narrow adders via carry-out propagation.
+
+We will explore other computer architectures as well for olfactory processing targeting wearable and distributed sensor networking
     olfactory applications.  Many ultra-low power candidate architectures
     currently exist, including ultra-low power microcontrollers~\cite{} and GPUs~\cite{},
     as well as \(<\si{\milli\watt}\) spatial architectures~\cite{}.
     Preliminary results analyzing olfactory applications
-    and their computational requirements (Sec~\ref{ssec:prelim2}) show that,
+    and their computational requirements  show that,
     for many applications, performance requirements are lax, and absolute
     computational and memory requirements are low.  This suggests that the
     architectural design space considered must go beyond looking at just
     computer organization and design, but must encompass memory design and
     operating points.
-
     Due to lax performance requirements and low computational requirements,
-    \olfc{} is likely a strong candidate for near or sub-threshold
+    olfactory computing is likely a strong candidate for near or sub-threshold
     computing~\cite{}.  Thus the design space exploration will include
-    ammenability to and impact of voltage scaling into the near and sub-threshold
+    amenability to and impact of voltage scaling into the near and sub-threshold
     regions.  Although this type of work has been done for CPU and GPU based
     architectures, it has, to the best of our knowledge, never been done for
     reconfigurable spatial architectures.
-    
-    As many \olfc{} applications require very small amounts of data memory,
+    Also, as many olfactory applications require very small amounts of data memory,
         memory design will be an important aspect of the design space
         exploration.  The size, geometry, and number of SRAM banks will be
         explored.  Additionally, since some applications require trivial
-        amounts of data memory, we will also consider memories composed wholy
+        amounts of data memory, we will also consider memories composed wholly
         or partially out of latches and flip-flops, rather than SRAM cells.
         Although SRAM cells are typically smaller and consume less power than
         flip-flops and latches at nominal voltage, SRAM cells are generally not
@@ -361,9 +468,21 @@ zheng2019wearable}.
         flip-flop based memories may consume less power than an equivalently
         sized SRAM.
 
-\item Analyze Ahromaa and existing olfactory computing hardware in a heterogeneous, networked
-     computational setting, in which computation can be offloaded from the earable
+We will also prototype and test an olfactory processing chip in TSMC \(\leq
+    \SI{65}{\nano\meter}\) technology.
+    The candidate design, the heterogeneous architecture described above, provides ample opportunities for architecture and physical design innovations in order to minimize energy of the prototype chip, especially since near-threshold processing would be involved. PI Kumar teaches a chip tapeout class every year where several RISC-V-based SoCs with a microcontroller core and multiple accelerators have already been taped out and tested successfully. The experience and the resources would be leveraged in the proposed prototyping effort.
+
+    Testing sub-objectives include olfactory system design
+        and PCB design, porting OlfacSuite applications to the chip, and collecting
+        measured OlfacSuite results.  System design will incorporate multiple
+        odor sensors and a hardware debug system.
+        Porting OlfacSuite applications to the chip requires annotating the OlfacSuite
+        C code with pragmas which enable the architecture's compiler to automatically
+        generate configurations and data streams for its spatial accelerator.
+       
+Finally, we will also analyze both proposed and existing olfactory computing hardware in a heterogeneous, networked
+     computational setting, in which computation can be offloaded from the olfactory
      device onto a number of other devices, including smart watches, smart phones,
-     and high perfromance cloud systems;
+     and high performance cloud systems. The work will be analogous to what was described earlier in context of earables.
 
 
